@@ -9,32 +9,4 @@ body {
   font-family: 'Merriweather', 'Helvetica Neue', Arial, sans-serif;
 }
 
-hr {
-  max-width: 50px;
-  border-width: 3px;
-  border-color: #F05F40;
-}
 
-hr.light {
-  border-color: #fff;
-}
-
-a {
-  color: #F05F40;
-  -webkit-transition: all 0.2s;
-  -moz-transition: all 0.2s;
-  transition: all 0.2s;
-}
-
-a:hover {
-  color: #f05f40;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
-}
