@@ -4,24 +4,22 @@ import { FormsModule } from '@angular/forms';
 
 import { Router } from '@angular/router';
 import { AppComponent } from './app.component';
-import { NavbarComponent } from './navbar/navbar.component';
-import { HeaderComponent } from './header/header.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { AppRoutingModule } from './app-routing.module';
+import { SharedModule} from './shared';
 
 @NgModule({
   declarations: [
     AppComponent,
-    NavbarComponent,
-    HeaderComponent,
     LoginComponent,
     RegisterComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
-    AppRoutingModule
+    AppRoutingModule,
+    SharedModule
   ],
   providers: [],
   bootstrap: [AppComponent]
