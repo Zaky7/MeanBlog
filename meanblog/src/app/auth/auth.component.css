@@ -1,0 +1,71 @@
+.container {
+  padding: 3rem !important;
+}
+
+/* Card Properties */
+.card-signin {
+  border: 0;
+  border-radius: 1rem !important;
+
+  /* offset-x | offset-y | blur-radius | spread-radius | color */
+  box-shadow: 0 0.75rem 1rem 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Body of the Card */
+.card-signin .card-body {
+  padding: 2rem !important;
+}
+
+/* Title of the Form */
+.card-signin .card-title {
+  margin-bottom: 2rem !important;
+  font-weight: 300 !important;
+  font-size: 1.5rem !important;
+}
+
+.form-control {
+  height: 3.125rem !important;
+}
+
+
+/* Input */
+.form-label-group input {
+  border-radius: 2rem;
+  margin-bottom: 1rem;
+}
+
+
+.form-label-group>label {
+  /* padding: var(--input-padding-y) var(--input-padding-x); */
+  padding-left: .75rem;
+}
+
+/* buttons */
+.btn-google {
+  color: white;
+  background-color: #ea4335;
+}
+
+.btn-facebook {
+  color: white;
+  background-color: #3b5998;
+}
+
+.form-signin .btn {
+  font-size: 80%;
+  border-radius: 5rem;
+  letter-spacing: .1rem;
+  font-weight: bold;
+  padding: 1rem;
+  transition: all 0.2s;
+}
+
+/* Links */
+p > span.login-page-link > a {
+  color: rgb(33, 37, 41) !important;
+  text-decoration: none;
+}
+
+p > span.login-page-link > a:hover {
+  color:rgb(33, 37, 41) !important;
+}
