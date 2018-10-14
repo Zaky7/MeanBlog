@@ -2,6 +2,9 @@ export interface User {
   email: string;
   token: string;
   username: string;
-  bio: string;
-  image: string;
+  id: string;
+  dateCreated: string;
+  bio?: string;
+  image?: string;
+  data?: string;
 }
