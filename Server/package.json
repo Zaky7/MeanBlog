@@ -1,5 +1,5 @@
 {
-  "name": "server",
+  "name": "nodebackendhttp",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,20 +9,12 @@
     "client": "cd ./client/meanblog/ && ng serve --open",
     "dev": "concurrently \"npm run server\" \"npm run client\""
   },
-  "author": "Zakir Saifi",
+  "author": "",
   "license": "ISC",
-  "devDependencies": {
-    "concurrently": "^4.0.1",
-    "grunt": "^1.0.3"
-  },
   "dependencies": {
     "body-parser": "^1.18.3",
-    "cookie-parser": "^1.4.3",
+    "cors": "^2.8.4",
     "express": "^4.16.3",
-    "jsonwebtoken": "^8.3.0",
-    "mongoose": "^5.3.1",
-    "passport": "^0.4.0",
-    "passport-jwt": "^4.0.0",
-    "passport-local": "^1.0.0"
+    "mongoose": "^5.2.1"
   }
 }

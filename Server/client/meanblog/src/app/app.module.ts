@@ -9,6 +9,7 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { SharedModule} from './shared';
 import { AuthModule } from './auth/auth.module';
+import { CoreModule } from './core/core.module';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { AuthModule } from './auth/auth.module';
     FormsModule,
     AppRoutingModule,
     SharedModule,
+    CoreModule,
     AuthModule
   ],
   providers: [],

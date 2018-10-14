@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Errors } from '../core';
+import { UserService } from '../core/services';
+
 
 @Component({
   selector: 'app-auth-page',
@@ -15,10 +17,12 @@ export class AuthComponent implements OnInit {
   isSubmitting = false;
   authForm: FormGroup;
 
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private userService: UserService
   ) {
     // use FormBuilder to create a form group
     this.authForm = this.fb.group({
@@ -43,8 +47,18 @@ export class AuthComponent implements OnInit {
   }
 
   submitForm() {
-     const credentails = this.authForm.value;
-     console.log(`${JSON.parse(credentails)}`);
+     const credentials = this.authForm.value;
+
+
+    this.userService
+    .attemptAuth(this.authType, credentials).subscribe(
+      data => this.router.navigateByUrl('/'),
+      err => {
+        this.errors = err;
+        this.isSubmitting = false;
+      }
+    );
+
   }
 
 }

@@ -1,41 +1,42 @@
 const express = require('express');
-const mongoose = require('mongoose');
-const keys = require('./config/keys');
-const passport = require('passport');
+const cors = require('cors');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const Keys = require('./config/keys');
+
 const app = express();
+const PORT = 5350;
 
-require('./config/passport');
+mongoose.connect(Keys.mongoURI, {
+    useNewUrlParser: true
+  })
+  .then(() => console.log('MongoDb Connected'))
+  .catch(err => console.log(err));
+
+mongoose.connection.on("error", function (err) {
+  console.log("Could not connect to mongo server!");
+  return console.log(err);
+});
 
 
-// <--- Body Parser MiddleWare -->
-app.use(bodyParser.urlencoded({ extended: false }));
+// CORS middleWare
+app.use(cors());
+
+//BodyParser MiddleWare
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
 app.use(bodyParser.json());
 
 
-/***************************************** EXTERNAL ROUTES  ************************************************/
-const user = require('./routes/user');
-const auth = require('./routes/auth');
-const index = require('./routes/index');
 
-app.use('/', index);
-app.use('/auth', auth);
-app.use('/user', passport.authenticate('jwt', {session: false}), user);
-//app.use('/user', user);
+//Routes
+const userRoute = require('./routes/user');
+app.use('/user', userRoute);
 
 
 
-
-mongoose.Promise = global.Promise;
-
-mongoose.connect(keys.mongoURI, { useNewUrlParser: true }).then(() => {
-  console.log('Connected to Remote mlab Database:- ' + keys.mongoURI);
-}).catch((err) => {
-  console.log('Error connecting to remote mlab Database ' + err);
-})
-
-
-const port = process.env.PORT || 5800;
-app.listen(port, () => {
-  console.log(`Server started on port ${port}`);
-})
+const server = app.listen(PORT, () => {
+  const port = server.address().port;
+  console.log(`App is running at http://localhost:${port}`);
+});

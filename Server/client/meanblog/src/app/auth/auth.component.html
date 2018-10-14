@@ -19,7 +19,8 @@
                   <div class="form-label-group">
                     <label for="inputUser">Username</label>
                     <input type="text" id="inputUser" formControlName="username" class="form-control" placeholder="User Name"
-                      required>
+                    *ngIf="authType == 'register'"
+                    required>
                   </div>
                 </fieldset>
               <!-- Email Input -->

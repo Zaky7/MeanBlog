@@ -23,7 +23,8 @@ import { ListErrorsComponent } from './list-errors.component';
     HeaderComponent,
     NavbarComponent,
     ListErrorsComponent,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    CommonModule
   ]
 })
 export class SharedModule {
