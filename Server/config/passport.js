@@ -2,12 +2,18 @@ const LocalStrategy = require('passport-local').Strategy;
 const mongoose = require('mongoose');
 const bcrypt   = require('bcryptjs');
 const passport = require('passport');
-
-//Loding the user Modal
+const JwtStrategy = require('passport-jwt').Strategy;
+const ExtractJwt  = require('passport-jwt').ExtractJwt;
+require('../models/users');
 const User = mongoose.model('users');
+const config = require('../config/database');
+
+
+
 /* done is a callback */
 module.exports = function(passport){
-  passport.use(new LocalStrategy({usernameField:'email'}, (email,password,done) =>{
+
+  passport.use('local', new LocalStrategy({usernameField:'email'}, (email,password,done) =>{
 
     //Match User
      User.findOne({
@@ -32,6 +38,27 @@ module.exports = function(passport){
      })
   }));
 
+	// let opts = {};
+	// opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+	// console.log(config.secret);
+	// opts.secretOrKey    = config.secret;
+	// passport.use('passport-jwt' , new JwtStrategy(opts, (jwt_payload, done) => {
+	// 	     console.log('PayLoad: ',jwt_payload);
+  //         User.getUserById(jwt_payload._id, (err,user) => {
+  //         	if(err) {
+  //         		return done(err,false);
+  //         	}
+
+  //         	if(user){
+  //         		return done(null,user);
+  //         	} else {
+  //         		return done (null,false);
+  //         	}
+
+  //         });
+	// }));
+
+
  /*
     In a typical web application, the credentials used to authenticate a user will only be transmitted during the login request.
     If authentication succeeds, a session will be established and maintained via a cookie set in user's browser.
@@ -48,4 +75,5 @@ module.exports = function(passport){
      done(err, user);
    });
  });
+
 }

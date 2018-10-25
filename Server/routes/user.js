@@ -56,16 +56,19 @@ async function addUserInDb(newUser, res) {
       const newUserInDb = await newUser.save();
       resultJson.user = newUserInDb;
       resultJson.info = "User successfully saved";
+      resultJson.success = true;
       res.json(resultJson);
     } catch (error) {
       console.trace(`Error saving new User`);
       resultJson.info = "Error in saving user";
       resultJson.user = null;
+      resultJson.success = false;
       res.json(resultJson);
     }
   } else {
     resultJson.user = userInDb;
-    resultJson.info = 'Email Id already Exist in the database'
+    resultJson.info = 'Email Id already Exist in the database';
+    resultJson.success = true;
     res.json(resultJson);
   }
 }
@@ -73,12 +76,50 @@ async function addUserInDb(newUser, res) {
 
 router.post('/login', (req,res,next) => {
 
-   passport.authenticate('local', (err, passportUser) => {
-       return res.json({
-         user: passportUser
-       });
-   })
+   // Returns an error array which if empty shows credentials are valid
+   let errors = validateRequest(req.body.user);
 
+   if(errors.length == 0) {
+    const username = req.body.username;
+    const password = req.body.password;
+    User.getUserByUsername(username, (err,user) => {
+      if(err){
+         throw err;
+      }
+
+      if(!user){
+         return res.json({success:false, msg:'User not found'});
+      }
+
+      User.comparePassword(password, user.password, (err, isMatch) => {
+            if(err) throw err;
+            if(isMatch){
+                   const token = jwt.sign(user.toJSON(),config.secret,{
+                         expiresIn:604800 // 1 week
+                   });
+
+                  //(MAKE SURE TO PUT A SPACE AFTER "Bearer"!!!!)
+                  res.json({
+                      success: true,
+                      token: 'Bearer '+ token,
+                      user : {
+                         id: user._id,
+                         name: user.name,
+                         username: user.username,
+                         email : user.email
+                      }
+                  });
+          } else {
+             return res.json({success:false, msg:'Wrong password'});
+          }
+      });
+  });
+   } else {
+    res.json({
+      success: false,
+      errors: errors
+    });
+   }
 });
 
 
@@ -103,6 +144,7 @@ router.post('/register', (req, res) => {
     addUserInDb(userModel, res);
   } else {
 		res.json({
+      success: false,
       errors: errors
     });
 	}

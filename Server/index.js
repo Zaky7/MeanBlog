@@ -2,7 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const Keys = require('./config/keys');
+const Keys = require('./config/database');
+const passport = require('passport');
 
 const app = express();
 const PORT = 5350;
@@ -21,6 +22,13 @@ mongoose.connection.on("error", function (err) {
 
 // CORS middleWare
 app.use(cors());
+
+
+// Passport Middle Ware
+
+app.use(passport.initialize());
+app.use(passport.session());
+require('./config/passport')(passport);
 
 //BodyParser MiddleWare
 app.use(bodyParser.urlencoded({
