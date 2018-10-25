@@ -10,7 +10,7 @@ const PORT = 5350;
 mongoose.connect(Keys.mongoURI, {
     useNewUrlParser: true
   })
-  .then(() => console.log('MongoDb Connected'))
+  .then(() => console.log(`MongoDb Connected ${Keys.mongoURI}`))
   .catch(err => console.log(err));
 
 mongoose.connection.on("error", function (err) {
@@ -38,5 +38,5 @@ app.use('/user', userRoute);
 
 const server = app.listen(PORT, () => {
   const port = server.address().port;
-  console.log(`App is running at http://localhost:${port}`);
+  console.log(`Server is running at http://localhost:${port}`);
 });
