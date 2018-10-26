@@ -8,6 +8,10 @@ const passport = require('passport');
 const app = express();
 const PORT = 5350;
 
+
+
+mongoose.Promise = global.Promise;
+
 mongoose.connect(Keys.mongoURI, {
     useNewUrlParser: true
   })
@@ -25,7 +29,6 @@ app.use(cors());
 
 
 // Passport Middle Ware
-
 app.use(passport.initialize());
 app.use(passport.session());
 require('./config/passport')(passport);

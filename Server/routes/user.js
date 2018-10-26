@@ -1,11 +1,14 @@
 const express = require('express');
+const passport = require('passport');
 const router = express.Router();
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const bcrypt   = require('bcryptjs');
+const config = require('../config/database');
 //Load Server Model
 require('../models/users');
 const User = mongoose.model('users');
+
 
 
 
@@ -54,7 +57,13 @@ async function addUserInDb(newUser, res) {
     try {
       newUser.password = await hashPassword(newUser.password);
       const newUserInDb = await newUser.save();
-      resultJson.user = newUserInDb;
+      let resUser =  {
+        id: newUserInDb._id,
+        name: newUserInDb.name,
+        username: newUserInDb.username,
+        email : newUserInDb.email
+      };
+      resultJson.user = resUser;
       resultJson.info = "User successfully saved";
       resultJson.success = true;
       res.json(resultJson);
@@ -66,7 +75,13 @@ async function addUserInDb(newUser, res) {
       res.json(resultJson);
     }
   } else {
-    resultJson.user = userInDb;
+    let resUser =  {
+      id: userInDb._id,
+      name: userInDb.name,
+      username: userInDb.username,
+      email : userInDb.email
+    };
+    resultJson.user = resUser;
     resultJson.info = 'Email Id already Exist in the database';
     resultJson.success = true;
     res.json(resultJson);
@@ -77,11 +92,12 @@ async function addUserInDb(newUser, res) {
 router.post('/login', (req,res,next) => {
 
    // Returns an error array which if empty shows credentials are valid
-   let errors = validateRequest(req.body.user);
+   const userObject = req.body.user;
+   let errors = validateRequest(userObject);
 
-   if(errors.length == 0) {
-    const username = req.body.username;
-    const password = req.body.password;
+   if(errors.length == 0 && userObject !== undefined) {
+    const username = userObject.username;
+    const password = userObject.password;
     User.getUserByUsername(username, (err,user) => {
       if(err){
          throw err;
@@ -94,7 +110,7 @@ router.post('/login', (req,res,next) => {
       User.comparePassword(password, user.password, (err, isMatch) => {
             if(err) throw err;
             if(isMatch){
-                   const token = jwt.sign(user.toJSON(),config.secret,{
+                   const token = jwt.sign(user ,config.secret,{
                          expiresIn:604800 // 1 week
                    });
 
@@ -125,8 +141,6 @@ router.post('/login', (req,res,next) => {
 
 router.post('/register', (req, res) => {
   console.log(req.body);
-
-
   if(req.body.user == undefined) {
      res.json('No user credentails specified');
   }
@@ -151,5 +165,16 @@ router.post('/register', (req, res) => {
 
 });
 
+
+router.get('/profile', passport.authenticate('jwt',{session:false}), (req,res,next) => {
+  res.json({user:req.user});
+});
+
+router.get("/secretDebug", (req, res, next) => {
+    console.log(req.get('Authorization'));
+    next();
+  }, (req, res) => {
+    res.json("debugging");
+});
 
 module.exports = router;
