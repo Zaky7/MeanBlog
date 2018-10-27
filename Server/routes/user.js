@@ -47,7 +47,6 @@ async function hashPassword(password) {
 
 async function addUserInDb(newUser, res) {
   const userInDb = await User.findOne({ email: newUser.email});
-
   let resultJson = {
      user: '',
      info: ''
@@ -57,6 +56,11 @@ async function addUserInDb(newUser, res) {
     try {
       newUser.password = await hashPassword(newUser.password);
       const newUserInDb = await newUser.save();
+
+      const token = jwt.sign(newUserInDb.toJSON() ,config.secret,{
+        expiresIn:604800 // 1 week
+       });
+
       let resUser =  {
         id: newUserInDb._id,
         name: newUserInDb.name,
@@ -72,6 +76,7 @@ async function addUserInDb(newUser, res) {
       resultJson.info = "Error in saving user";
       resultJson.user = null;
       resultJson.success = false;
+      resultJson.token = "";
       res.json(resultJson);
     }
   } else {
@@ -81,9 +86,15 @@ async function addUserInDb(newUser, res) {
       username: userInDb.username,
       email : userInDb.email
     };
+
+    const token = jwt.sign(userInDb.toJSON() ,config.secret,{
+      expiresIn:604800 // 1 week
+     });
+
     resultJson.user = resUser;
     resultJson.info = 'Email Id already Exist in the database';
     resultJson.success = true;
+    resultJson.token = token;
     res.json(resultJson);
   }
 }
