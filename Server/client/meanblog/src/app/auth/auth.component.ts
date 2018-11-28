@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router';
 import { Errors } from '../core';
 import { UserService } from '../core/services';
+import { FlashMessagesService } from 'angular2-flash-messages';
 
 
 @Component({
@@ -22,11 +23,12 @@ export class AuthComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private fb: FormBuilder,
-    private userService: UserService
+    private userService: UserService,
+    private _flashMessagesService: FlashMessagesService
   ) {
     // use FormBuilder to create a form group
     this.authForm = this.fb.group({
-      'email': ['', Validators.required],
+      'email': ['', Validators.email],
       'password': ['', Validators.required]
     });
   }
@@ -46,17 +48,49 @@ export class AuthComponent implements OnInit {
     });
   }
 
+  verifyCredentials(credentials) {
+    const errors = [];
+    if (credentials.email) {
+      // tslint:disable-next-line:max-line-length
+      const regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+      const isValidEmail =  regex.test(String(credentials.email).toLowerCase());
+
+      if (!isValidEmail) {
+          errors.push('Not valid Email Address');
+      }
+    }
+
+    if (credentials.password) {
+       if (credentials.password.length < 4) {
+          errors.push('Password Length should be greater than 4 characters');
+       }
+    }
+    return errors;
+  }
+
   submitForm() {
     const credentials = this.authForm.value;
-    this.userService
-    .attemptAuth(this.authType, credentials).subscribe(
-      data => this.router.navigateByUrl('/'),
-      err => {
-        this.errors = err;
-        this.isSubmitting = false;
-      }
-    );
+    const errors = this.verifyCredentials(credentials);
+    console.log(errors);
+    if (errors.length < 1) {
+      this.userService.attemptAuth(this.authType, credentials).subscribe(
+        data => this.router.navigateByUrl('/'),
+        err => {
+          this.errors = err;
+          this.isSubmitting = false;
+        }
+      );
+    } else {
+      errors.map(error => {
+        console.log(error);
+        this._flashMessagesService.show(error, { cssClass: 'alert-danger', timeout: 18000 });
+      });
+    }
+  }
 
+  testFlasMessage() {
+    this._flashMessagesService.show('Password not correct', { cssClass: 'alert-danger', timeout: 1800 });
   }
 
 }

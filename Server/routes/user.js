@@ -18,10 +18,6 @@ function validateRequest(reqObject) {
      errors.push('No email id specified');
    }
 
-   if(reqObject.username == undefined || reqObject.username == "") {
-     errors.push('No valid username specified');
-   }
-
    if(reqObject.password == undefined || reqObject.password == "") {
       if(reqObject.password.length < 8) {
           errors.push('Password length less than 8 characters');
@@ -32,6 +28,7 @@ function validateRequest(reqObject) {
    return errors;
 }
 
+// Generate HashPassword
 async function hashPassword(password) {
   const saltRounds = 10;
   const hashedPassword = await new Promise((resolve, reject) => {
@@ -40,7 +37,6 @@ async function hashPassword(password) {
       resolve(hash)
     });
   })
-
   console.log(`Hashed Password ${hashedPassword}`);
   return hashedPassword
 }
@@ -48,8 +44,7 @@ async function hashPassword(password) {
 async function addUserInDb(newUser, res) {
   const userInDb = await User.findOne({ email: newUser.email});
   let resultJson = {
-     user: '',
-     info: ''
+     user: ''
   };
 
   if (!userInDb) {
@@ -59,21 +54,23 @@ async function addUserInDb(newUser, res) {
 
       const token = jwt.sign(newUserInDb.toJSON() ,config.secret,{
         expiresIn:604800 // 1 week
-       });
+      });
 
       let resUser =  {
         id: newUserInDb._id,
         name: newUserInDb.name,
         username: newUserInDb.username,
-        email : newUserInDb.email
+        email : newUserInDb.email,
+        dateCreated: newUserInDb.dateCreated
       };
       resultJson.user = resUser;
-      resultJson.info = "User successfully saved";
+      resultJson.token = token;
+      resultJson.msg = "User successfully saved";
       resultJson.success = true;
       res.json(resultJson);
     } catch (error) {
       console.trace(`Error saving new User`);
-      resultJson.info = "Error in saving user";
+      resultJson.msg = "Error in saving user";
       resultJson.user = null;
       resultJson.success = false;
       resultJson.token = "";
@@ -84,7 +81,8 @@ async function addUserInDb(newUser, res) {
       id: userInDb._id,
       name: userInDb.name,
       username: userInDb.username,
-      email : userInDb.email
+      email : userInDb.email,
+      dateCreated: userInDb.dateCreated
     };
 
     const token = jwt.sign(userInDb.toJSON() ,config.secret,{
@@ -92,7 +90,7 @@ async function addUserInDb(newUser, res) {
      });
 
     resultJson.user = resUser;
-    resultJson.info = 'Email Id already Exist in the database';
+    resultJson.msg = 'Email Id already Exist in the database';
     resultJson.success = true;
     resultJson.token = token;
     res.json(resultJson);
@@ -107,9 +105,9 @@ router.post('/login', (req,res,next) => {
    let errors = validateRequest(userObject);
 
    if(errors.length == 0 && userObject !== undefined) {
-    const username = userObject.username;
+    const email = userObject.email;
     const password = userObject.password;
-    User.getUserByUsername(username, (err,user) => {
+    User.getUserByEmail(email, (err,user) => {
       if(err){
          throw err;
       }
@@ -121,30 +119,38 @@ router.post('/login', (req,res,next) => {
       User.comparePassword(password, user.password, (err, isMatch) => {
             if(err) throw err;
             if(isMatch){
-                   const token = jwt.sign(user ,config.secret,{
+                   const token = jwt.sign(user.toJSON() ,config.secret,{
                          expiresIn:604800 // 1 week
                    });
 
                   //(MAKE SURE TO PUT A SPACE AFTER "Bearer"!!!!)
                   res.json({
-                      success: true,
-                      token: 'Bearer '+ token,
                       user : {
                          id: user._id,
                          name: user.name,
                          username: user.username,
                          email : user.email
-                      }
+                      },
+                      token: 'Bearer '+ token,
+                      success: true,
                   });
           } else {
-             return res.json({success:false, msg:'Wrong password'});
+             return res.json({
+               user: null,
+               token: null,
+               msg:'Wrong password',
+               success:false,
+              });
           }
       });
   });
    } else {
     res.json({
+      user: null,
+      token: null,
+      errors: errors,
       success: false,
-      errors: errors
+      msg: "User not found"
     });
    }
 });

@@ -69,3 +69,10 @@ p > span.login-page-link > a {
 p > span.login-page-link > a:hover {
   color:rgb(33, 37, 41) !important;
 }
+
+
+/* Flash Messge */
+div > .flash-message {
+   max-width: 2px !important;
+}
+

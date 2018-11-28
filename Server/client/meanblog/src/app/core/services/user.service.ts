@@ -59,21 +59,38 @@ export class UserService {
 
 
   attemptAuth(type, credentials) {
-    const route = (type === 'register') ? '/register' : '';
+    let route;
 
-    if (route !== '') {
-      console.log(`Request Sent`);
-      return this.apiService.post('/user' + route, {user: credentials})
+    if (type === 'login') {
+       route = '/login';
+    } else if (type === 'register') {
+       route = '/register';
+    } else {
+      route = '';
+    }
+
+    return this.apiService.post('/user' + route, {user: credentials})
         .pipe(map(
         data => {
-          console.log(data);
-          data.user.token = data.token;
-          this.setAuth(data.user);
+          console.log(`Login  ${data}`);
+          const user: User = this.getUserFromResponse(data);
+          this.setAuth(user);
           return data;
         }
-      ));
-    }
+    ));
 }
+
+  getUserFromResponse(data) {
+    const user: User = {
+      email: data.user.email,
+      token: data.token,
+      username: data.user.username,
+      id: data.user.id,
+      dateCreated: data.user.dateCreated
+    };
+
+    return user;
+  }
 
   getCurrentUser(): User {
     return this.currentUserSubject.value;

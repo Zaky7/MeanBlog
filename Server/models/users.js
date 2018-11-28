@@ -20,7 +20,7 @@ const UserSchema = new Schema({
   },
   dateCreated: {
     type: Date,
-    default: Date.now
+    default: Date.now()
   }
 });
 
@@ -36,9 +36,9 @@ module.exports.getUserById =  function(id,callback) {
 }
 
 //Function for calling respective Users by Username
-module.exports.getUserByUsername = function(username,callback){
-	const query = {username: username}
-	User.findOne(query,callback).lean();
+module.exports.getUserByEmail = function(email,callback){
+	const query = {email: email}
+	User.findOne(query,callback);
 }
 
 

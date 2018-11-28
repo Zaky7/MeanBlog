@@ -13,36 +13,36 @@ const config = require('../config/database');
 /* done is a callback */
 module.exports = function (passport) {
 
-  // passport.use('user-local', new LocalStrategy({
-  //   usernameField: 'email'
-  // }, (email, password, done) => {
+  passport.use('user-local', new LocalStrategy({
+    usernameField: 'email'
+  }, (email, password, done) => {
 
-  //   //Match User
-  //   User.findOne({
-  //     email: email
-  //   }).then(user => {
-  //     if (!user) {
-  //       console.log(email);
-  //       return done(null, false, {
-  //         message: 'No User Found'
-  //       });
-  //     }
+    //Match User
+    User.findOne({
+      email: email
+    }).then(user => {
+      if (!user) {
+        console.log(email);
+        return done(null, false, {
+          message: 'No User Found'
+        });
+      }
 
-  //     //Match Password
-  //     bcrypt.compare(password, user.password, (err, isMatch) => {
-  //       if (err) throw err;
+      //Match Password
+      bcrypt.compare(password, user.password, (err, isMatch) => {
+        if (err) throw err;
 
-  //       if (isMatch) {
-  //         done(null, user);
-  //       } else {
-  //         done(null, false, {
-  //           message: 'Password do not Match'
-  //         });
-  //       }
+        if (isMatch) {
+          done(null, user);
+        } else {
+          done(null, false, {
+            message: 'Password do not Match'
+          });
+        }
 
-  //     });
-  //   })
-  // }));
+      });
+    })
+  }));
 
   passport.use(new JwtStrategy({
     jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('Bearer'),
