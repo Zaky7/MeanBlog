@@ -33,6 +33,13 @@ export class UserService {
     if (this.jwtService.getToken()) {
       // Get the user details user is authorized
       console.log(`/user Rest Call`);
+      this.apiService.get('/user/profile').subscribe((data) => {
+        console.log(data);
+        this.setAuth(data.user);
+      },
+      err => this.purgeAuth()
+      );
+
     } else {
       // Remove the potentials remnants of previous auth
       this.purgeAuth();
@@ -69,15 +76,18 @@ export class UserService {
       route = '';
     }
 
-    return this.apiService.post('/user' + route, {user: credentials})
-        .pipe(map(
-        data => {
-          console.log(`Login  ${data}`);
-          const user: User = this.getUserFromResponse(data);
-          this.setAuth(user);
-          return data;
-        }
-    ));
+    return this.apiService.post('/user' + route, { user: credentials })
+      .pipe(map(
+        (data) => {
+              console.log(`Login  ${data}`);
+              if (data.user === null || data.token === null) {
+              } else {
+                const user: User = this.getUserFromResponse(data);
+                this.setAuth(user);
+              }
+              return data;
+         }
+      ));
 }
 
   getUserFromResponse(data) {

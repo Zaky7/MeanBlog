@@ -72,10 +72,16 @@ export class AuthComponent implements OnInit {
   submitForm() {
     const credentials = this.authForm.value;
     const errors = this.verifyCredentials(credentials);
-    console.log(errors);
+    console.log(`Errors ${JSON.stringify(errors)}`);
     if (errors.length < 1) {
       this.userService.attemptAuth(this.authType, credentials).subscribe(
-        data => this.router.navigateByUrl('/'),
+        (data) => {
+          if (data.token === null) {
+            this._flashMessagesService.show(data.msg, { cssClass: 'alert-danger', timeout: 18000 });
+          } else {
+            this.router.navigateByUrl('/');
+          }
+        },
         err => {
           this.errors = err;
           this.isSubmitting = false;

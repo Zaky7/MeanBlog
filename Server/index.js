@@ -24,20 +24,21 @@ mongoose.connection.on("error", function (err) {
 });
 
 
+//BodyParser MiddleWare
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
+app.use(bodyParser.json());
+
 // CORS middleWare
 app.use(cors());
-
 
 // Passport Middle Ware
 app.use(passport.initialize());
 app.use(passport.session());
 require('./config/passport')(passport);
 
-//BodyParser MiddleWare
-app.use(bodyParser.urlencoded({
-  extended: false
-}));
-app.use(bodyParser.json());
+
 
 
 

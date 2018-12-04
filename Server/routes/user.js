@@ -8,7 +8,7 @@ const config = require('../config/database');
 //Load Server Model
 require('../models/users');
 const User = mongoose.model('users');
-
+const auth = require('./testjwt');
 
 
 
@@ -161,10 +161,8 @@ router.post('/register', (req, res) => {
   if(req.body.user == undefined) {
      res.json('No user credentails specified');
   }
-
   // Returns an error array which if empty shows credentials are valid
   let errors = validateRequest(req.body.user);
-
 	if(errors.length == 0) {
     const user = req.body.user;
     const userModel = new User({
@@ -183,14 +181,12 @@ router.post('/register', (req, res) => {
 });
 
 
-router.get('/profile', passport.authenticate('jwt',{session:false}), (req,res,next) => {
+router.get('/profile', passport.authenticate('my-jwt'), (req,res,next) => {
+  console.log(req.get('Authorization'));
   res.json({user:req.user});
 });
 
-router.get("/secretDebug", (req, res, next) => {
-    console.log(req.get('Authorization'));
-    next();
-  }, (req, res) => {
+router.get("/secretDebug", auth , (req, res) => {
     res.json("debugging");
 });
 

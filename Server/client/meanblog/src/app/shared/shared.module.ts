@@ -6,6 +6,7 @@ import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent, NavbarComponent } from './layout';
 import { ListErrorsComponent } from './list-errors.component';
+import { ShowAuthedDirective } from './show-authed.directive';
 
 
 @NgModule({
@@ -20,7 +21,8 @@ import { ListErrorsComponent } from './list-errors.component';
   declarations: [
     HeaderComponent,
     NavbarComponent,
-    ListErrorsComponent
+    ListErrorsComponent,
+    ShowAuthedDirective
   ],
   exports: [
     HeaderComponent,
@@ -28,7 +30,8 @@ import { ListErrorsComponent } from './list-errors.component';
     ListErrorsComponent,
     ReactiveFormsModule,
     CommonModule,
-    FlashMessagesModule
+    FlashMessagesModule,
+    ShowAuthedDirective
   ]
 })
 export class SharedModule {

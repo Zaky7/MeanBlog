@@ -44,8 +44,8 @@ module.exports = function (passport) {
     })
   }));
 
-  passport.use(new JwtStrategy({
-    jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('Bearer'),
+  passport.use('my-jwt', new JwtStrategy({
+    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     secretOrKey: config.secret
   }, (jwt_payload, done) => {
     console.log('PayLoad: ', jwt_payload);
